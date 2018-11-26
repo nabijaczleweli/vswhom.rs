@@ -12,3 +12,5 @@ version = "0.1.0"
 authors = ["nabijaczleweli <nabijaczleweli@gmail.com>"]
 
 [dependencies]
+vswhom-sys = "0.1"
+libc = "0.2"
