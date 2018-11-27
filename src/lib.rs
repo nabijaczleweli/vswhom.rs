@@ -54,10 +54,3 @@ fn osfpo(s: *const u16) -> Option<OsString> {
         None
     }
 }
-
-
-#[test]
-fn tt() {
-    println!("{:?}", VsFindResult::search());
-    assert!(false);
-}

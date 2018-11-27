@@ -26,6 +26,11 @@
 			"path": "src"
 		},
 		{
+			"follow_symlinks": true,
+			"name": "Examples",
+			"path": "examples"
+		},
+		{
 			"file_include_patterns":
 			[
 				"*Makefile*",
