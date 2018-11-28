@@ -23,6 +23,7 @@ build_script:
 test: off
 test_script:
   - cargo test --verbose --release
+  - cargo run --verbose --release --example detect
 
 notifications:
   - provider: Email
