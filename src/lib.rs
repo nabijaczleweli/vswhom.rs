@@ -23,13 +23,15 @@ pub struct VsFindResult {
 
 impl VsFindResult {
     pub fn search() -> Option<VsFindResult> {
-        let mut res = unsafe { vswhom_find_visual_studio_and_windows_sdk() };
-        let ret = VsFindResult::from_raw_result(&res);
-        unsafe { vswhom_free_resources(&mut res) };
-        ret
+        unsafe {
+            let mut res = vswhom_find_visual_studio_and_windows_sdk();
+            let ret = VsFindResult::from_raw_result(&res);
+            vswhom_free_resources(&mut res);
+            ret
+        }
     }
 
-    pub fn from_raw_result(res: &Find_Result) -> Option<VsFindResult> {
+    pub unsafe fn from_raw_result(res: &Find_Result) -> Option<VsFindResult> {
         if res.windows_sdk_version != 0 {
             Some(VsFindResult {
                 windows_sdk_version: res.windows_sdk_version as u8,
@@ -48,9 +50,9 @@ impl VsFindResult {
 }
 
 
-fn osfpo(s: *const u16) -> Option<OsString> {
+unsafe fn osfpo(s: *const u16) -> Option<OsString> {
     if !s.is_null() {
-        Some(OsString::from_wide(unsafe { slice::from_raw_parts(s, wcslen(s)) }))
+        Some(OsString::from_wide(slice::from_raw_parts(s, wcslen(s))))
     } else {
         None
     }
