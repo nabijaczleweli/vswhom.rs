@@ -1,7 +1,7 @@
 extern crate vswhom_sys;
 extern crate libc;
 
-use vswhom_sys::{vswhom_find_visual_studio_and_windows_sdk, vswhom_free_resources};
+use vswhom_sys::{Find_Result, vswhom_find_visual_studio_and_windows_sdk, vswhom_free_resources};
 use std::os::windows::ffi::OsStringExt;
 use std::ffi::OsString;
 use libc::wcslen;
@@ -24,8 +24,13 @@ pub struct VsFindResult {
 impl VsFindResult {
     pub fn search() -> Option<VsFindResult> {
         let mut res = unsafe { vswhom_find_visual_studio_and_windows_sdk() };
+        let ret = VsFindResult::from_raw_result(&res);
+        unsafe { vswhom_free_resources(&mut res) };
+        ret
+    }
 
-        let ret = if res.windows_sdk_version != 0 {
+    pub fn from_raw_result(res: &Find_Result) -> Option<VsFindResult> {
+        if res.windows_sdk_version != 0 {
             Some(VsFindResult {
                 windows_sdk_version: res.windows_sdk_version as u8,
 
@@ -38,11 +43,7 @@ impl VsFindResult {
             })
         } else {
             None
-        };
-
-        unsafe { vswhom_free_resources(&mut res) };
-
-        ret
+        }
     }
 }
 
