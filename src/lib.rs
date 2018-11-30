@@ -3,6 +3,7 @@ extern crate libc;
 
 use vswhom_sys::{Find_Result, vswhom_find_visual_studio_and_windows_sdk, vswhom_free_resources};
 use std::os::windows::ffi::OsStringExt;
+use std::num::NonZeroU8;
 use std::ffi::OsString;
 use libc::wcslen;
 use std::slice;
@@ -11,7 +12,7 @@ use std::slice;
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct VsFindResult {
     /// Zero if no Windows SDK found.
-    pub windows_sdk_version: u8,
+    pub windows_sdk_version: NonZeroU8,
 
     pub windows_sdk_root: Option<OsString>,
     pub windows_sdk_um_library_path: Option<OsString>,
@@ -34,7 +35,7 @@ impl VsFindResult {
     pub unsafe fn from_raw_result(res: &Find_Result) -> Option<VsFindResult> {
         if res.windows_sdk_version != 0 {
             Some(VsFindResult {
-                windows_sdk_version: res.windows_sdk_version as u8,
+                windows_sdk_version: NonZeroU8::new_unchecked(res.windows_sdk_version as u8),
 
                 windows_sdk_root: osfpo(res.windows_sdk_root),
                 windows_sdk_um_library_path: osfpo(res.windows_sdk_um_library_path),
