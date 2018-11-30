@@ -13,4 +13,6 @@ authors = ["nabijaczleweli <nabijaczleweli@gmail.com>"]
 
 [dependencies]
 vswhom-sys = "0.1"
+
+[target.'cfg(target_os = "windows")'.dependencies]
 libc = "0.2"
