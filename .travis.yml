@@ -28,6 +28,7 @@ before_install:
 script:
   - if [ "$LANGUAGE" == "Rust" ]; then cargo build --verbose; fi
   - if [ "$LANGUAGE" == "Rust" ]; then cargo test --verbose; fi
+  - if [ "$LANGUAGE" == "Rust" ]; then cargo run --verbose --example detect; fi
   - if [ "$LANGUAGE" == "Rust" ] && [ "$TRAVIS_TAG" ]; then cargo build --verbose --release; fi
   -
   - if [ "$LANGUAGE" == "Rust-doc" ]; then cargo doc; fi
