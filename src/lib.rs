@@ -1,3 +1,24 @@
+//! FFI to [Jon Blow's VS discovery script](https://pastebin.com/3YvWQa5c).
+//!
+//! See the associated funxions on `VsFindResult` for more specific info,
+//! but I'll copy over some usage information from the original file:
+//!
+//! The purpose of this file is to find the folders that contain libraries
+//! you may need to link against, on Windows, if you are linking with any
+//! compiled C or C++ code. This will be necessary for many non-C++ programming
+//! language environments that want to provide compatibility.
+//!
+//! We find the place where the Visual Studio libraries live (for example,
+//! libvcruntime.lib), where the linker and compiler executables live
+//! (for example, link.exe), and where the Windows SDK libraries reside
+//! (kernel32.lib, libucrt.lib).
+//!
+//! One other shortcut I took is that this is hardcoded to return the
+//! folders for x64 libraries. If you want x86 or arm, you can make
+//! slight edits to the code below, or, if enough people want this,
+//! I can work it in here.
+
+
 extern crate vswhom_sys;
 #[cfg(target_os = "windows")]
 extern crate libc;
@@ -15,9 +36,9 @@ use libc::wcslen;
 use std::slice;
 
 
+/// The result of looking for Visual Studio and Windows SDK.
 #[derive(Debug, Clone, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct VsFindResult {
-    /// Zero if no Windows SDK found.
     pub windows_sdk_version: NonZeroU8,
 
     pub windows_sdk_root: Option<OsString>,
@@ -29,6 +50,9 @@ pub struct VsFindResult {
 }
 
 impl VsFindResult {
+    /// Use `vswhom-sys` to find Visual Studio and Windows SDK and parse it.
+    ///
+    /// Always returns `None` on non-Windows.
     pub fn search() -> Option<VsFindResult> {
         #[cfg(target_os = "windows")]
         unsafe {
@@ -42,6 +66,13 @@ impl VsFindResult {
         None
     }
 
+    /// Parse a result from `vswhom_sys`.
+    ///
+    /// Returns `None` if `windows_sdk_version` is `0`.
+    ///
+    /// Allocates fresh Rust `OsString`s where non-null.
+    ///
+    /// Always returns `None` on non-Windows.
     pub unsafe fn from_raw_result(res: &Find_Result) -> Option<VsFindResult> {
         #[cfg(target_os = "windows")]
         {
