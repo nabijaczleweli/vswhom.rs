@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["VsFindResult",""]]});
+initSidebarItems({"struct":[["VsFindResult","The result of looking for Visual Studio and Windows SDK."]]});
